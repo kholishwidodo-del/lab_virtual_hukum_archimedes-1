@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Laboratorium Virtual - Hukum Archimedes</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: #f7faff;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            color: #003366;
+        }
+        /* Tambahkan gaya untuk identitas */
+        .identity {
+            font-size: 1.1em;
+            color: #004d99;
+            margin-top: -10px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 40px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        /* --- BENTUK GELAS KIMIA 2D TEGAK LURUS --- */
+        .bejana {
+            position: relative;
+            width: 180px; 
+            height: 350px; 
+            background: rgba(200, 230, 255, 0.4); 
+            border: 2px solid #003366; 
+            border-radius: 4px 4px 20px 20px; 
+            overflow: hidden;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Pseudo-element untuk bibir tuang (lip) */
+        .bejana::before {
+            content: '';
+            position: absolute;
+            top: -12px; 
+            left: -5px;
+            width: 190px; 
+            height: 15px; 
+            background: #003366; 
+            border-radius: 50% 50% 0 0; 
+            border: 1px solid #001122;
+            box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
+            z-index: 10;
+        }
+
+        .cairan {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 85%; 
+            background: linear-gradient(to top, #3399ff, #99ccff);
+            opacity: 0.8;
+            border-radius: 0 0 18px 18px; 
+            z-index: 2;
+        }
+        .permukaan {
+            position: absolute;
+            top: 52px; 
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: #ffffff;
+            border-top: 2px solid #0066cc;
+            border-radius: 50% / 4px; 
+            z-index: 5;
+        }
+        /* --- END OF BEJANA STYLE --- */
+        
+        .benda {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: orange;
+            border: 2px solid #aa5500;
+            border-radius: 10px;
+            left: 60px; 
+            transition: top 0.5s;
+            z-index: 15; 
+            pointer-events: none;
+            position: relative; 
+        }
+        
+        /* --- TANDA PANAH (GAYA) --- */
+        
+        /* Container untuk Panah Fa (Gaya Apung) */
+        .benda .arrow-Fa {
+            position: absolute;
+            bottom: 100%; 
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 35px; 
+            z-index: 20;
+            color: blue;
+            font-size: 14px;
+            font-weight: bold;
+            text-align: left;
+        }
+        /* Batang Panah Fa */
+        .benda .arrow-Fa::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0; 
+            width: 2px;
+            /* DIBUAT LEBIH PANJANG DARI SEHARUSNYA (35px) */
+            height: 35px; 
+            background: blue;
+            /* Z-Index lebih rendah agar kepala panah menutupi kelebihan batang */
+            z-index: 1; 
+        }
+        /* Kepala Panah Fa (Lancip) - Panah ke ATAS */
+        .benda .arrow-Fa::after {
+            content: '';
+            position: absolute;
+            top: 0; /* Ubah ke 0 agar kepala panah menjadi elemen paling atas */
+            left: -4px; 
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent; 
+            border-right: 5px solid transparent;
+            border-bottom: 8px solid blue; 
+            z-index: 2; /* Z-Index lebih tinggi agar kepala panah menutupi batang */
+        }
+        /* Label Fa - ditempatkan terpisah di kanan panah */
+        .benda .arrow-Fa span {
+            position: absolute;
+            top: 10px; 
+            left: 10px; 
+            line-height: 1;
+        }
+
+        /* Container untuk Panah w (Berat Benda) */
+        .benda .arrow-w {
+            position: absolute;
+            top: 100%; 
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 35px; 
+            z-index: 20;
+            color: red;
+            font-size: 14px;
+            font-weight: bold;
+            text-align: left;
+        }
+        /* Batang Panah w */
+        .benda .arrow-w::before {
+            content: '';
+            position: absolute;
+            top: 0; 
+            left: 0; 
+            width: 2px;
+            /* DIBUAT LEBIH PANJANG DARI SEHARUSNYA (35px) */
+            height: 35px; 
+            background: red;
+            /* Z-Index lebih rendah agar kepala panah menutupi kelebihan batang */
+            z-index: 1; 
+        }
+        /* Kepala Panah w (Lancip) - Panah ke BAWAH */
+        .benda .arrow-w::after {
+            content: '';
+            position: absolute;
+            bottom: 0; /* Ubah ke 0 agar kepala panah menjadi elemen paling bawah */
+            left: -4px; 
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent; 
+            border-right: 5px solid transparent;
+            border-top: 8px solid red; 
+            z-index: 2; /* Z-Index lebih tinggi agar kepala panah menutupi batang */
+        }
+        /* Label w - ditempatkan terpisah di kanan panah */
+        .benda .arrow-w span {
+            position: absolute;
+            top: 10px; 
+            left: 10px; 
+            line-height: 1;
+        }
+
+        /* --- END OF TANDA PANAH --- */
+
+        .controls {
+            text-align: left;
+            max-width: 300px;
+        }
+        .output {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #003366;
+        }
+    </style>
+</head>
+<body>
+    <h1>Laboratorium Virtual<br>Hukum Archimedes</h1>
+    
+    <p class="identity">Dibuat oleh: Mohamad Kholish Widodo (MTsN 1 Kota Malang)</p>
+    
+    <div class="container">
+        <div class="bejana">
+            <div class="cairan"></div>
+            <div class="permukaan"></div>
+            
+            <div id="benda" class="benda">
+                <div class="arrow-Fa"><span>Fa</span></div>
+                <div class="arrow-w"><span>w</span></div>
+            </div>
+        </div>
+        <div class="controls">
+            <label>Massa Benda (kg): </label><br>
+            <input type="range" id="massa" min="0.5" max="20" step="0.5" value="10">
+            <span id="valMassa">10</span> kg
+            <br><br>
+
+            <label>Volume Benda (m³): </label><br>
+            <input type="range" id="volume" min="0.001" max="0.01" step="0.001" value="0.005">
+            <span id="valVolume">0.005</span> m³
+            <br><br>
+
+            <label>Massa Jenis Cairan (kg/m³): </label><br>
+            <select id="rho">
+                <option value="1000">Air (1000)</option>
+                <option value="13600">Raksa (13600)</option>
+                <option value="800">Minyak (800)</option>
+            </select>
+
+            <div class="output" id="hasil"></div>
+        </div>
+    </div>
+
+    <script>
+        const g = 9.8;
+        const massa = document.getElementById("massa");
+        const volume = document.getElementById("volume");
+        const rho = document.getElementById("rho");
+        const valMassa = document.getElementById("valMassa");
+        const valVolume = document.getElementById("valVolume");
+        const hasil = document.getElementById("hasil");
+        const benda = document.getElementById("benda");
+
+        function update() {
+            let m = parseFloat(massa.value);
+            let V = parseFloat(volume.value);
+            let dens = parseFloat(rho.value);
+
+            valMassa.textContent = m;
+            valVolume.textContent = V.toFixed(3);
+
+            let W = m * g;           // Berat benda
+            let FA = dens * g * V;   // Gaya apung
+
+            // Penyesuaian Posisi benda berdasarkan dimensi bejana (W:180px, H:350px)
+            let tinggiBejana = 350;
+            let tinggiBenda = 60;
+            let permukaanY = 52; // Posisi permukaan cairan (52px) dari atas bejana
+            let dasarBejana = tinggiBejana - tinggiBenda; // Posisi benda ketika tenggelam
+            let topPos;
+            
+            if (FA < W) {
+                // Tenggelam (di dasar bejana)
+                topPos = dasarBejana; 
+            } else if (Math.abs(FA - W) < 1) {
+                // Melayang (di tengah-tengah air)
+                let dasarAir = tinggiBejana; 
+                let tengahAir = permukaanY + (dasarAir - permukaanY) / 2 - (tinggiBenda / 2);
+                topPos = tengahAir;
+            } else {
+                // Terapung (di permukaan, 20px di atas permukaan air)
+                topPos = permukaanY - 20; 
+            }
+
+            benda.style.top = topPos + "px";
+            
+            // update teks hasil
+            let kondisi = (FA < W) ? "Benda Tenggelam" : (Math.abs(FA - W) < 1 ? "Benda Melayang" : "Benda Terapung");
+            hasil.textContent = `Berat (w) = ${W.toFixed(2)} N | Gaya Apung (Fa) = ${FA.toFixed(2)} N → ${kondisi}`;
+        }
+
+        massa.addEventListener("input", update);
+        volume.addEventListener("input", update);
+        rho.addEventListener("change", update);
+
+        update();
+    </script>
+</body>
+</html>
